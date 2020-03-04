@@ -3,27 +3,27 @@ ATmega128_Int_test.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000100  00000000  00000000  00000054  2**1
+  0 .text         00000124  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .stab         000006cc  00000000  00000000  00000154  2**2
+  1 .stab         000006cc  00000000  00000000  00000178  2**2
                   CONTENTS, READONLY, DEBUGGING
-  2 .stabstr      00000085  00000000  00000000  00000820  2**0
+  2 .stabstr      00000085  00000000  00000000  00000844  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_aranges 00000020  00000000  00000000  000008a5  2**0
+  3 .debug_aranges 00000020  00000000  00000000  000008c9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_pubnames 0000002a  00000000  00000000  000008c5  2**0
+  4 .debug_pubnames 0000002a  00000000  00000000  000008e9  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   0000016f  00000000  00000000  000008ef  2**0
+  5 .debug_info   000001ef  00000000  00000000  00000913  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 0000010c  00000000  00000000  00000a5e  2**0
+  6 .debug_abbrev 0000011e  00000000  00000000  00000b02  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   000001c3  00000000  00000000  00000b6a  2**0
+  7 .debug_line   0000020d  00000000  00000000  00000c20  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000030  00000000  00000000  00000d30  2**2
+  8 .debug_frame  00000030  00000000  00000000  00000e30  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000010f  00000000  00000000  00000d60  2**0
+  9 .debug_str    0000010f  00000000  00000000  00000e60  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_pubtypes 00000038  00000000  00000000  00000e6f  2**0
+ 10 .debug_pubtypes 00000038  00000000  00000000  00000f6f  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -72,8 +72,8 @@ Disassembly of section .text:
   92:	d0 e1       	ldi	r29, 0x10	; 16
   94:	de bf       	out	0x3e, r29	; 62
   96:	cd bf       	out	0x3d, r28	; 61
-  98:	0e 94 6e 00 	call	0xdc	; 0xdc <main>
-  9c:	0c 94 7e 00 	jmp	0xfc	; 0xfc <_exit>
+  98:	0e 94 83 00 	call	0x106	; 0x106 <main>
+  9c:	0c 94 90 00 	jmp	0x120	; 0x120 <_exit>
 
 000000a0 <__bad_interrupt>:
   a0:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -83,7 +83,7 @@ Disassembly of section .text:
 
 
 
-SIGNAL(SIG_INTERRUPT0)  
+ISR(INT0_vect)  
 {
   a4:	1f 92       	push	r1
   a6:	0f 92       	push	r0
@@ -94,6 +94,7 @@ SIGNAL(SIG_INTERRUPT0)
   b0:	9f 93       	push	r25
   b2:	af 93       	push	r26
   b4:	bf 93       	push	r27
+
       PORTA=0X00;
   b6:	1b ba       	out	0x1b, r1	; 27
 	#else
@@ -102,58 +103,89 @@ SIGNAL(SIG_INTERRUPT0)
 	#endif
 
 	__builtin_avr_delay_cycles(__ticks_dc);
-  b8:	8f e7       	ldi	r24, 0x7F	; 127
-  ba:	96 e9       	ldi	r25, 0x96	; 150
-  bc:	a8 e9       	ldi	r26, 0x98	; 152
+  b8:	8f ef       	ldi	r24, 0xFF	; 255
+  ba:	9b e7       	ldi	r25, 0x7B	; 123
+  bc:	a2 e9       	ldi	r26, 0x92	; 146
   be:	81 50       	subi	r24, 0x01	; 1
   c0:	90 40       	sbci	r25, 0x00	; 0
   c2:	a0 40       	sbci	r26, 0x00	; 0
   c4:	e1 f7       	brne	.-8      	; 0xbe <__vector_1+0x1a>
   c6:	00 c0       	rjmp	.+0      	; 0xc8 <__vector_1+0x24>
   c8:	00 00       	nop
-   _delay_ms(50000); 
+   _delay_ms(3000);
+	PORTA=0X01;
+  ca:	81 e0       	ldi	r24, 0x01	; 1
+  cc:	8b bb       	out	0x1b, r24	; 27
+  ce:	8f ef       	ldi	r24, 0xFF	; 255
+  d0:	9b e7       	ldi	r25, 0x7B	; 123
+  d2:	a2 e9       	ldi	r26, 0x92	; 146
+  d4:	81 50       	subi	r24, 0x01	; 1
+  d6:	90 40       	sbci	r25, 0x00	; 0
+  d8:	a0 40       	sbci	r26, 0x00	; 0
+  da:	e1 f7       	brne	.-8      	; 0xd4 <__vector_1+0x30>
+  dc:	00 c0       	rjmp	.+0      	; 0xde <__vector_1+0x3a>
+  de:	00 00       	nop
+   _delay_ms(3000);
+         PORTA=0X00;
+  e0:	1b ba       	out	0x1b, r1	; 27
+  e2:	8f ef       	ldi	r24, 0xFF	; 255
+  e4:	9b e7       	ldi	r25, 0x7B	; 123
+  e6:	a2 e9       	ldi	r26, 0x92	; 146
+  e8:	81 50       	subi	r24, 0x01	; 1
+  ea:	90 40       	sbci	r25, 0x00	; 0
+  ec:	a0 40       	sbci	r26, 0x00	; 0
+  ee:	e1 f7       	brne	.-8      	; 0xe8 <__vector_1+0x44>
+  f0:	00 c0       	rjmp	.+0      	; 0xf2 <__vector_1+0x4e>
+  f2:	00 00       	nop
+   _delay_ms(3000);
 }
-  ca:	bf 91       	pop	r27
-  cc:	af 91       	pop	r26
-  ce:	9f 91       	pop	r25
-  d0:	8f 91       	pop	r24
-  d2:	0f 90       	pop	r0
-  d4:	0f be       	out	0x3f, r0	; 63
-  d6:	0f 90       	pop	r0
-  d8:	1f 90       	pop	r1
-  da:	18 95       	reti
+  f4:	bf 91       	pop	r27
+  f6:	af 91       	pop	r26
+  f8:	9f 91       	pop	r25
+  fa:	8f 91       	pop	r24
+  fc:	0f 90       	pop	r0
+  fe:	0f be       	out	0x3f, r0	; 63
+ 100:	0f 90       	pop	r0
+ 102:	1f 90       	pop	r1
+ 104:	18 95       	reti
 
-000000dc <main>:
+00000106 <main>:
 
 int main(void)
 { 
  DDRA=0XFF;
-  dc:	8f ef       	ldi	r24, 0xFF	; 255
-  de:	8a bb       	out	0x1a, r24	; 26
+ 106:	8f ef       	ldi	r24, 0xFF	; 255
+ 108:	8a bb       	out	0x1a, r24	; 26
  DDRD = 0xFE;
-  e0:	8e ef       	ldi	r24, 0xFE	; 254
-  e2:	81 bb       	out	0x11, r24	; 17
- SREG |= 0x80;                    
-  e4:	8f b7       	in	r24, 0x3f	; 63
-  e6:	80 68       	ori	r24, 0x80	; 128
-  e8:	8f bf       	out	0x3f, r24	; 63
- EIMSK = 0x01;	//
-  ea:	81 e0       	ldi	r24, 0x01	; 1
-  ec:	89 bf       	out	0x39, r24	; 57
+ 10a:	8e ef       	ldi	r24, 0xFE	; 254
+ 10c:	81 bb       	out	0x11, r24	; 17
+ //SREG |= 0x80;  //status register Bit 7 defined for global Interrupt                
+ EIMSK = 0x01;	/*
+ 10e:	81 e0       	ldi	r24, 0x01	; 1
+ 110:	89 bf       	out	0x39, r24	; 57
+External Interrupt Control Registers . EICRA and EICRB . defines whether the external interrupt
+is activated on rising or falling edge or level sensed. Activity on any of these pins will trigger
+an interrupt request even if the pin is enabled as an output. This provides a way of generating a
+software interrupt.
+*/
  EICRA=0X03;	//Rising Enge Trigger
-  ee:	83 e0       	ldi	r24, 0x03	; 3
-  f0:	80 93 6a 00 	sts	0x006A, r24
-                
- sei();                       
-  f4:	78 94       	sei
+ 112:	83 e0       	ldi	r24, 0x03	; 3
+ 114:	80 93 6a 00 	sts	0x006A, r24
+1 1 The rising edge of INTn generates asynchronously an interrupt request.
+n = 3, 2, 1or 0.
+When changing the ISCn1/ISCn0 bits, the interrupt must be disabled by clearing its Interrupt
+Enable bit in the EIMSK Register. Otherwise an interrupt can occur when the bits are changed.
+*/
+ sei();       //sei()는 reset해도 메인으로 빠지고 sreg는 reset시 인터럽트를 거치고 시작하는듯                
+ 118:	78 94       	sei
  while(1){
   PORTA=0XFF;                 
-  f6:	8f ef       	ldi	r24, 0xFF	; 255
-  f8:	8b bb       	out	0x1b, r24	; 27
-  fa:	fe cf       	rjmp	.-4      	; 0xf8 <main+0x1c>
+ 11a:	8f ef       	ldi	r24, 0xFF	; 255
+ 11c:	8b bb       	out	0x1b, r24	; 27
+ 11e:	fe cf       	rjmp	.-4      	; 0x11c <main+0x16>
 
-000000fc <_exit>:
-  fc:	f8 94       	cli
+00000120 <_exit>:
+ 120:	f8 94       	cli
 
-000000fe <__stop_program>:
-  fe:	ff cf       	rjmp	.-2      	; 0xfe <__stop_program>
+00000122 <__stop_program>:
+ 122:	ff cf       	rjmp	.-2      	; 0x122 <__stop_program>

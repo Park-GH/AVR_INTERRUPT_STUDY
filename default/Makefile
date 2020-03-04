@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Objects that must be built in order to link
-OBJECTS = ATmega128_Int_test.o 
+OBJECTS = ATmega128_Int_test.o test2.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
@@ -47,6 +47,9 @@ all: $(TARGET) ATmega128_Int_test.hex ATmega128_Int_test.eep ATmega128_Int_test.
 
 ## Compile
 ATmega128_Int_test.o: ../ATmega128_Int_test.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
+
+test2.o: ../test2.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ##Link
